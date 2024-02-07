@@ -9,13 +9,13 @@ import com.example.edulearn.model.Course;
 import com.example.edulearn.model.Users;
 
 public interface CourseRepository{
-	ArrayList<Course> getCourses();
+	ArrayList<Course> getCourses(int userId);
 	
 	Course getCourseById(int courseId);
 	
-	Course addCourse(Course course);
+	Course addCourse(int id,Course course);
 	
-	Course updateCourse(int courseId,Course course);
+	Course updateCourse(int courseId,Course course,int userId);
 	
 	void deleteCourse(int courseId);
 	

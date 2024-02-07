@@ -22,25 +22,25 @@ public class CourseController {
 	
 	CourseJpaService courseJpaService;
 	
-	@GetMapping("/courses")
-	public ArrayList<Course> getCourses()
+	@GetMapping("/courses/{userId}")
+	public ArrayList<Course> getCourses(@PathVariable("userId") int userId)
 	{
-		return courseJpaService.getCourses();
+		return courseJpaService.getCourses(userId);
 	}
 	
-	@GetMapping("/courses/{courseId}")
+	@GetMapping("/courses/{courseId}/{userId}")
 	public Course getCourseById(@PathVariable("courseId") int id)
 	{
 		return courseJpaService.getCourseById(id);
 	}
-	@PostMapping("/courses")
-    public Course postMethodName(@RequestBody Course course) {
-       return courseJpaService.addCourse(course);
+	@PostMapping("/courses/{userId}")
+    public Course postMethodName(@PathVariable("userId") int id,@RequestBody Course course) {
+       return courseJpaService.addCourse(id,course);
     }
-    @PutMapping("/courses/{courseId}")
-    public Course putMethodName(@PathVariable("courseId") int id, @RequestBody Course course) {
+    @PutMapping("/courses/{courseId}/{userId}")
+    public Course putMethodName(@PathVariable("courseId") int id,@PathVariable("userId") int userId, @RequestBody Course course) {
         
-        return courseJpaService.updateCourse(id,course);
+        return courseJpaService.updateCourse(id,course,userId);
     }
     @DeleteMapping("/courses/{courseId}")
     public void delete(@PathVariable("courseId") int id) {
@@ -48,7 +48,7 @@ public class CourseController {
         
     }
     @GetMapping("courses/{courseId}/users")
-    public List<Users> getusers(@PathVariable("courseId ") int id) {
+    public List<Users> getusers(@PathVariable("courseId") int id) {
         return courseJpaService.getCourseUsers(id);
     }
 	

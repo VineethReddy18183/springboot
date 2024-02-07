@@ -9,7 +9,7 @@ public interface UserRepository {
 	
 	ArrayList<Users> getUsers();
 	Users getUserById(int userId);
-	Users addUser(Users user);
+	Users addUser(int id,Users user);
 	Users updateUser(int userId,Users user);
 	void deleteUser(int userId);
 	List<Course> getUserCourses(int id);

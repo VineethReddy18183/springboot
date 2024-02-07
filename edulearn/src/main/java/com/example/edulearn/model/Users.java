@@ -1,6 +1,7 @@
 package com.example.edulearn.model;
 
 
+import java.util.ArrayList;
 import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
@@ -41,7 +42,7 @@ public class Users{
 	)
 	
 	@JsonIgnoreProperties("users")
-	private List<Course> courses;
+	private List<Course> courses = new ArrayList<>();
 	
 	
 	public Users()

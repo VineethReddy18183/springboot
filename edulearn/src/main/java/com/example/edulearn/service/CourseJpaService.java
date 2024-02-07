@@ -25,10 +25,21 @@ public class CourseJpaService implements CourseRepository
 	private UserJpaRepository userJpaRepository;
 
 	@Override
-	public ArrayList<Course> getCourses() {
-		List<Course> courseList = courseJpaRepository.findAll();
-		ArrayList<Course> courses = new ArrayList<>(courseList);
-		return courses;
+	public ArrayList<Course> getCourses(int userId) {
+		Users existingUser = userJpaRepository.findById(userId).get();
+		String roleType = existingUser.getUserrole();
+		if("STUDENT".equals(roleType))
+		{
+			List<Course> courseList = courseJpaRepository.findAll();
+			ArrayList<Course> courses = new ArrayList<>(courseList);
+			return courses;
+			
+		}
+		else
+		{
+			throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
+		}
+		
 	}
 
 	@Override
@@ -47,31 +58,40 @@ public class CourseJpaService implements CourseRepository
 	}
 
 	@Override
-	public Course addCourse(Course course) {
+	public Course addCourse(int id,Course course) {
 		
-		List<Integer> userIds = new ArrayList<>();
-		for(Users user:course.getUsers())
+		Users existingUser = userJpaRepository.findById(id).get();
+		String roleType = existingUser.getUserrole();
+		if("AUTHOR".equals(roleType))
 		{
-			userIds.add(user.getId());
-		}
-		
-		List<Users> users = userJpaRepository.findAllById(userIds);
-		
-		/*if(userIds.size() != users.size())
-		{
+			List<Integer> userIds = new ArrayList<>();
+			for(Users user:course.getUsers())
+			{
+				userIds.add(user.getId());
+			}
 			
+			List<Users> users = userJpaRepository.findAllById(userIds);
+			
+			/*if(userIds.size() != users.size())
+			{
+				
+				throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
+			}*/
+			course.setUsers(users);
+			
+			courseJpaRepository.save(course);
+			for(Users user:users)
+			{
+				user.getCourses().add(course);
+				
+			}
+			userJpaRepository.saveAll(users);
+			return course;
+		}
+		else {
 			throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
-		}*/
-		course.setUsers(users);
-		
-		courseJpaRepository.save(course);
-		for(Users user:users)
-		{
-			user.getCourses().add(course);
 			
 		}
-		userJpaRepository.saveAll(users);
-		return course;
 		
 		
 		
@@ -80,49 +100,65 @@ public class CourseJpaService implements CourseRepository
 	}
 
 	@Override
-	public Course updateCourse(int courseId, Course course) {
-		try {
-			Course original = courseJpaRepository.findById(courseId).get();
-			if((course.getCourse_title()) != null)
-			{
-				original.setCourse_title(course.getCourse_title());
-				
-				
-			}
-			if(course.getCourse_category() != null)
-			{
-				original.setCourse_category(course.getCourse_category());
-			}
-			
-			if(course.getUsers() != null)
-			{
-				List<Users> users1 = original.getUsers();
-				for(Users user : users1)
-				{
-					user.getCourses().remove(original);
-				}
-				userJpaRepository.saveAll(users1);
-				List<Integer> ids = new ArrayList<>();
-				for(Users user : course.getUsers())
-				{
-					ids.add(user.getId());
-				}
-				List<Users> users = userJpaRepository.findAllById(ids);
-				original.setUsers(users);
-				for(Users user : users)
-				{
-					user.getCourses().add(original);
-				}
-				userJpaRepository.saveAll(users);
-			}
-			courseJpaRepository.save(original);
-			return original;
+	public Course updateCourse(int courseId, Course course,int userId) {
+		Users existingUser = userJpaRepository.findById(userId).get();
+		String roleType = existingUser.getUserrole();
+		List<Course> courseList = existingUser.getCourses();
+		List<Integer> courseIds = new ArrayList<>();
+		for(Course cours : courseList)
+		{
+			courseIds.add(cours.getCourse_id());
+		}
+		if("AUTHOR".equals(roleType) && courseIds.contains(courseId))
+		{
 			
 		
+			try {
+				Course original = courseJpaRepository.findById(courseId).get();
+				if((course.getCourse_title()) != null)
+				{
+					original.setCourse_title(course.getCourse_title());
+					
+					
+				}
+				if(course.getCourse_category() != null)
+				{
+					original.setCourse_category(course.getCourse_category());
+				}
+				
+				if(course.getUsers() != null)
+				{
+					List<Users> users1 = original.getUsers();
+					for(Users user : users1)
+					{
+						user.getCourses().remove(original);
+					}
+					userJpaRepository.saveAll(users1);
+					List<Integer> ids = new ArrayList<>();
+					for(Users user : course.getUsers())
+					{
+						ids.add(user.getId());
+					}
+					List<Users> users = userJpaRepository.findAllById(ids);
+					original.setUsers(users);
+					for(Users user : users)
+					{
+						user.getCourses().add(original);
+					}
+					userJpaRepository.saveAll(users);
+				}
+				courseJpaRepository.save(original);
+				return original;
+				
+			
+			}
+			catch(Exception e)
+			{
+				throw new ResponseStatusException(HttpStatus.NOT_FOUND);
+			}
 		}
-		catch(Exception e)
-		{
-			throw new ResponseStatusException(HttpStatus.NOT_FOUND);
+		else {
+			throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
 		}
 		
 		

@@ -35,11 +35,11 @@ public class UserController {
 		return userJpaService.getUserById(id);
 	}
 	
-	@PostMapping("/users")
+	@PostMapping("/users/{userId}")
 	
-	public Users addUser(@RequestBody Users user)
+	public Users addUser(@PathVariable("userId") int id,@RequestBody Users user)
 	{
-		return userJpaService.addUser(user);
+		return userJpaService.addUser(id,user);
 	}
 	
 	@PutMapping("/users/{userId}")
@@ -57,7 +57,7 @@ public class UserController {
 	@GetMapping("/users/{userId}/courses")
 	public List<Course> getUserCourses(@PathVariable("userId") int userId)
 	{
-		return getUserCourses(userId);
+		return userJpaService.getUserCourses(userId);
 	}
 
 }

@@ -48,21 +48,31 @@ public class UserJpaService implements UserRepository{
 
 
 	@Override
-	public Users addUser(Users user) {
-		List<Integer> courseIds = new ArrayList<>();
+	public Users addUser(int id,Users user) {
 		
-		for(Course course:user.getCourses())
+		Users existingUser = userJpaRepository.findById(id).get();
+		String roleType = existingUser.getUserrole();
+		
+		if ("ADMIN".equals(roleType))
 		{
-			courseIds.add(course.getCourse_id());
-		}
-		List<Course> courses = courseJpaRepository.findAllById(courseIds);
-		if(courses.size() != courseIds.size())
+			List<Integer> courseIds = new ArrayList<>();
+			
+			for(Course course:user.getCourses())
+			{
+				courseIds.add(course.getCourse_id());
+			}
+			List<Course> courses = courseJpaRepository.findAllById(courseIds);
+			if(courses.size() != courseIds.size())
+			{
+				throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
+			}
+			user.setCourses(courses);
+			userJpaRepository.save(user);
+			return user;
+		}else
 		{
 			throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
 		}
-		user.setCourses(courses);
-		userJpaRepository.save(user);
-		return user;
 	}
 
 
