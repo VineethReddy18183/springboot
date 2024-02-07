@@ -47,9 +47,15 @@ public class CourseController {
         courseJpaService.deleteCourse(id);
         
     }
-    @GetMapping("courses/{courseId}/users")
+    @GetMapping("/courses/{courseId}/users")
     public List<Users> getusers(@PathVariable("courseId") int id) {
         return courseJpaService.getCourseUsers(id);
+    }
+    
+    @PostMapping("/courses/{userId}/{courseId}")
+    public ArrayList<Course> enrollCourse(@PathVariable("userId") int userId,@PathVariable("courseId") int courseId)
+    {
+    	return courseJpaService.enrollCourse(userId, courseId);
     }
 	
 	

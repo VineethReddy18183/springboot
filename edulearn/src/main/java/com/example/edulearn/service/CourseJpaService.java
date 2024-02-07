@@ -163,6 +163,38 @@ public class CourseJpaService implements CourseRepository
 		
 		
 	}
+	@Override
+	
+	public ArrayList<Course>  enrollCourse(int userId,int courseId)
+	
+	{
+		Users existingUser = userJpaRepository.findById(userId).get();
+		Course course = courseJpaRepository.findById(courseId).get();
+		
+		
+		
+		if("STUDENT".equals(existingUser.getUserrole()))
+		{
+			List<Course> courses = existingUser.getCourses();
+			if(!(courses.contains(course)))
+			{	
+				courses.add(course);
+			}
+			ArrayList<Course> courseList = new ArrayList<>(courses);
+			
+			userJpaRepository.save(existingUser);
+			
+			
+			return courseList;
+			
+		}
+		else
+		{
+			throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
+		}
+		
+		
+	}
 
 	@Override
 	public void deleteCourse(int courseId) {

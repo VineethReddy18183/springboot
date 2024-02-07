@@ -17,6 +17,8 @@ public interface CourseRepository{
 	
 	Course updateCourse(int courseId,Course course,int userId);
 	
+	ArrayList<Course> enrollCourse(int userId,int courseId);
+	
 	void deleteCourse(int courseId);
 	
 	List<Users> getCourseUsers(int id);
