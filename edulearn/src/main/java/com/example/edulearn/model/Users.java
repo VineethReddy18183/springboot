@@ -53,7 +53,7 @@ public class Users{
 		joinColumns = @JoinColumn(name = "user_id"),
 		inverseJoinColumns = @JoinColumn(name = "course_id")
 	)
-	@JsonIgnoreProperties("authoredCourseusers","enrolledCourseusers")
+	@JsonIgnoreProperties({"authoredCourseusers","enrolledCourseusers"})
 	private List<Course> authoredCourses = new ArrayList<>();
 	
 	
@@ -63,7 +63,7 @@ public class Users{
 		joinColumns = @JoinColumn(name = "user_id"),
 		inverseJoinColumns = @JoinColumn(name = "course_id")
 	)
-	@JsonIgnoreProperties("enrolledCourseusers","authoredCourseusers")
+	@JsonIgnoreProperties({"enrolledCourseusers","authoredCourseusers"})
 	private List<Course> enrolledCourses = new ArrayList<>();
 	
 	
@@ -73,7 +73,7 @@ public class Users{
 		joinColumns = @JoinColumn(name = "user_id"),
 		inverseJoinColumns = @JoinColumn(name = "course_id")
 	)
-	@JsonIgnoreProperties("")
+	@JsonIgnoreProperties({"enrolledCourseusers","authoredCourseusers"})
 	private List<Course> favoriteCourses = new ArrayList<>();
 	
 	public Users()

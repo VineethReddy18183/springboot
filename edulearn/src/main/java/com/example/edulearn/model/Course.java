@@ -41,11 +41,11 @@ public class Course{
 
 	
 	@ManyToMany(mappedBy = "enrolledCourses")
-	@JsonIgnoreProperties("enrolledCourses" , "authoredCourses")
+	@JsonIgnoreProperties({"enrolledCourses" , "authoredCourses"})
 	private List<Users> enrolledCourseusers;
 	
 	@ManyToMany(mappedBy = "authoredCourses")
-	@JsonIgnoreProperties("enrolledCourses" , "authoredCourses")
+	@JsonIgnoreProperties({"enrolledCourses" , "authoredCourses"})
 	private List<Users> authoredCourseusers;
 	
 	
