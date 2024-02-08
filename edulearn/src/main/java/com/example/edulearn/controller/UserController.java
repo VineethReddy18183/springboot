@@ -42,22 +42,23 @@ public class UserController {
 		return userJpaService.addUser(id,user);
 	}
 	
-	@PutMapping("/users/{userId}")
+	@PutMapping("/users/update/{userId}")
 	public Users updateUser(@PathVariable("userId") int id,@RequestBody Users user)
 	{
 		return userJpaService.updateUser(id,user);
 	}
 	
-	@DeleteMapping("/users/{userId}")
+	@DeleteMapping("/users/delete/{userId}")
 	public void deleteUser(@PathVariable("userId") int id)
 	{
 		userJpaService.deleteUser(id);
 	}
 	
-	@GetMapping("/users/{userId}/courses")
+	@GetMapping("/courses/users/{userId}/courses")
 	public List<Course> getUserCourses(@PathVariable("userId") int userId)
 	{
 		return userJpaService.getUserCourses(userId);
 	}
-
+	
+	
 }

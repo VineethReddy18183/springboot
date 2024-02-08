@@ -1,13 +1,12 @@
 package com.example.edulearn.repository;
+import com.example.edulearn.model.Users;
 
 import java.util.ArrayList;
-import java.util.List;
+
 
 
 
 import com.example.edulearn.model.Course;
-import com.example.edulearn.model.Users;
-
 public interface CourseRepository{
 	ArrayList<Course> getCourses(int userId);
 	
@@ -19,7 +18,11 @@ public interface CourseRepository{
 	
 	ArrayList<Course> enrollCourse(int userId,int courseId);
 	
+	ArrayList<Course> addfavoriteCourse(int userId,int courseId);
+	
 	void deleteCourse(int courseId);
 	
-	List<Users> getCourseUsers(int id);
+	ArrayList<Users> getCourseEnrolledUsers(int id);
+	
+    ArrayList<Users> getCourseAuthoredUser(int id);
 }

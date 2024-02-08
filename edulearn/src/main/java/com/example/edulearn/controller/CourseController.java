@@ -47,15 +47,29 @@ public class CourseController {
         courseJpaService.deleteCourse(id);
         
     }
-    @GetMapping("/courses/{courseId}/users")
+    @GetMapping("/courses/enrolledcourses/25/{courseId}/users")
     public List<Users> getusers(@PathVariable("courseId") int id) {
-        return courseJpaService.getCourseUsers(id);
+        return courseJpaService.getCourseEnrolledUsers(id);
     }
     
-    @PostMapping("/courses/{userId}/{courseId}")
+    @PostMapping("/courses/enrol/{userId}/{courseId}")
     public ArrayList<Course> enrollCourse(@PathVariable("userId") int userId,@PathVariable("courseId") int courseId)
     {
     	return courseJpaService.enrollCourse(userId, courseId);
+    }
+    
+    @PostMapping("courses/add/fav/{userId}/{courseId}")
+    public ArrayList<Course> addfavoriteCourse(@PathVariable("userId") int userId,@PathVariable("courseId") int courseId)
+    {
+    	return courseJpaService.addfavoriteCourse(userId, courseId);
+    }
+    
+    @GetMapping("/author/{courseId}")
+    public ArrayList<Users> getCourseAuthor(@PathVariable("courseId") int courseId)
+    {
+    	List<Users> courseAuthors =  courseJpaService.getCourseAuthoredUser(courseId);
+    	ArrayList<Users> courseAuthorList = new ArrayList<>(courseAuthors);
+    	return courseAuthorList;
     }
 	
 	

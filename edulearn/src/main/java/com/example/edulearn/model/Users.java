@@ -14,6 +14,7 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinTable;
 import jakarta.persistence.ManyToMany;
+import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import jakarta.persistence.JoinColumn;
 
@@ -34,7 +35,7 @@ public class Users{
 	
 	
 	
-	@ManyToMany
+/*	@ManyToMany
 	@JoinTable(
 		name = "user_course",
 		joinColumns = @JoinColumn(name = "user_id"),
@@ -44,9 +45,36 @@ public class Users{
 	@JsonIgnoreProperties("users")
 	private List<Course> courses = new ArrayList<>();
 	
+*/	
+	
+	@ManyToMany
+	@JoinTable(
+		name = "user_authoredCourse",
+		joinColumns = @JoinColumn(name = "user_id"),
+		inverseJoinColumns = @JoinColumn(name = "course_id")
+	)
+	@JsonIgnoreProperties("authoredCourseusers","enrolledCourseusers")
+	private List<Course> authoredCourses = new ArrayList<>();
 	
 	
+	@ManyToMany
+	@JoinTable(
+		name = "user_enrolledCourse",
+		joinColumns = @JoinColumn(name = "user_id"),
+		inverseJoinColumns = @JoinColumn(name = "course_id")
+	)
+	@JsonIgnoreProperties("enrolledCourseusers","authoredCourseusers")
+	private List<Course> enrolledCourses = new ArrayList<>();
 	
+	
+	@ManyToMany
+	@JoinTable(
+		name = "user_favoriteCourse",
+		joinColumns = @JoinColumn(name = "user_id"),
+		inverseJoinColumns = @JoinColumn(name = "course_id")
+	)
+	@JsonIgnoreProperties("")
+	private List<Course> favoriteCourses = new ArrayList<>();
 	
 	public Users()
 	{
@@ -80,14 +108,38 @@ public class Users{
 		this.user_role = userrole;
 	}
 	
-	public List<Course> getCourses()
-	{
-		return courses;
+
+	public List<Course> getAuthoredCourses() {
+		return authoredCourses;
+	}
+
+
+
+	public void setAuthoredCourses(List<Course> authoredCourses) {
+		this.authoredCourses = authoredCourses;
+	}
+
+
+
+	public List<Course> getEnrolledCourses() {
+		return enrolledCourses;
+	}
+
+
+
+	public void setEnrolledCourses(List<Course> enrolledCourses) {
+		this.enrolledCourses = enrolledCourses;
 	}
 	
-	public void setCourses(List<Course> courses)
-	{
-		this.courses = courses;
+	
+	public List<Course> getFavoriteCourses() {
+		return favoriteCourses;
+	}
+
+
+
+	public void setFavoriteCourses(List<Course> favoriteCourses) {
+		this.favoriteCourses = favoriteCourses;
 	}
 	
 	

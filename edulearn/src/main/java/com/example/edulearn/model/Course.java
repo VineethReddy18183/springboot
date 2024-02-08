@@ -1,5 +1,6 @@
 package com.example.edulearn.model;
 
+import java.lang.annotation.Repeatable;
 import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
@@ -9,7 +10,9 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToMany;
+import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 
 import com.example.edulearn.model.Users;
@@ -32,9 +35,21 @@ public class Course{
 	private String course_category;
 	
 	
-	@JsonIgnoreProperties("courses")
-	@ManyToMany(mappedBy = "courses")
-	private List<Users> users;
+
+	
+
+
+	
+	@ManyToMany(mappedBy = "enrolledCourses")
+	@JsonIgnoreProperties("enrolledCourses" , "authoredCourses")
+	private List<Users> enrolledCourseusers;
+	
+	@ManyToMany(mappedBy = "authoredCourses")
+	@JsonIgnoreProperties("enrolledCourses" , "authoredCourses")
+	private List<Users> authoredCourseusers;
+	
+	
+	
 	public Course()
 	{
 		
@@ -73,7 +88,7 @@ public class Course{
 		this.course_category = course_category;
 	}
 	
-	public List<Users> getUsers()
+	/*public List<Users> getUsers()
 	{
 		return users;
 	}
@@ -81,7 +96,37 @@ public class Course{
 	public void setUsers(List<Users> users)
 	{
 		this.users = users;
+	}*/
+	
+	public List<Users> getEnrolledCourseusers() {
+		return enrolledCourseusers;
 	}
+
+	public void setEnrolledCourseusers(List<Users> enrolledCourseusers) {
+		this.enrolledCourseusers = enrolledCourseusers;
+	}
+
+
+
+	public List<Users> getAuthoredCourseusers() {
+		return authoredCourseusers;
+	}
+
+
+
+	public void setAuthoredCourseusers(List<Users> authoredCourseusers) {
+		this.authoredCourseusers = authoredCourseusers;
+	}
+
+
+
+
+
+
+
+
+
+	
 
 	
 	

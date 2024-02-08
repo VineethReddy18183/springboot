@@ -55,18 +55,7 @@ public class UserJpaService implements UserRepository{
 		
 		if ("ADMIN".equals(roleType))
 		{
-			List<Integer> courseIds = new ArrayList<>();
 			
-			for(Course course:user.getCourses())
-			{
-				courseIds.add(course.getCourse_id());
-			}
-			List<Course> courses = courseJpaRepository.findAllById(courseIds);
-			if(courses.size() != courseIds.size())
-			{
-				throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
-			}
-			user.setCourses(courses);
 			userJpaRepository.save(user);
 			return user;
 		}else
@@ -89,7 +78,7 @@ public class UserJpaService implements UserRepository{
 			original.setUserrole(user.getUserrole());
 			
 		}
-		if(user.getCourses() != null)
+		/*if(user.getCourses() != null)
 		{
 			List<Integer> courseIds = new ArrayList<>();
 			for(Course course:user.getCourses())
@@ -102,7 +91,7 @@ public class UserJpaService implements UserRepository{
 				throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
 			}
 			original.setCourses(courses);
-		}
+		}*/
 		userJpaRepository.save(original);
 		return original;
 		}
@@ -134,7 +123,16 @@ public class UserJpaService implements UserRepository{
 	public List<Course> getUserCourses(int id) {
 		try {
 			Users user = userJpaRepository.findById(id).get();
-			return user.getCourses();
+		    String roleType = user.getUserrole();
+		    if("STUDENT".equals(roleType))
+		    {
+		    	return user.getEnrolledCourses();		    
+		    }
+		    else if("AUTHOR".equals(roleType))
+		    {
+		    	return user.getAuthoredCourses();
+		    }
+		    return null;
 		}
 		catch(Exception e)
 		{
