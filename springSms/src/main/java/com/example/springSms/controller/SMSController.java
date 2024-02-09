@@ -12,14 +12,16 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.example.springSms.model.NotificationSms;
+//import com.example.springSms.model.NotificationSms;
 import com.example.springSms.model.SmsPojo;
-import com.example.springSms.service.SmsService;
+import com.example.springSms.service.NotificationSmsService;
 
 @RestController
 public class SMSController {
 
 	@Autowired
-    SmsService service;
+    NotificationSmsService service;
 
     @Autowired
     private SimpMessagingTemplate webSocket;
@@ -28,7 +30,7 @@ public class SMSController {
 
     @RequestMapping(value = "/sms", method = RequestMethod.POST,
             consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
-    public void smsSubmit(@RequestBody SmsPojo sms) {
+    public void smsSubmit(@RequestBody NotificationSms sms) {
         try{
             service.send(sms);
         }
@@ -37,7 +39,7 @@ public class SMSController {
             webSocket.convertAndSend(TOPIC_DESTINATION, getTimeStamp() + ": Error sending the SMS: "+e.getMessage());
             throw e;
         }
-        webSocket.convertAndSend(TOPIC_DESTINATION, getTimeStamp() + ": SMS has been sent!: "+sms.getTo());
+        webSocket.convertAndSend(TOPIC_DESTINATION, getTimeStamp() + ": SMS has been sent!: "+sms.getPhoneNumber());
 
     }
 
