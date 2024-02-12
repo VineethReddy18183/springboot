@@ -1,5 +1,7 @@
 package com.example.springSms.service;
 
+import java.util.List;
+
 import org.apache.http.HttpStatus;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -10,6 +12,7 @@ import org.springframework.web.server.ResponseStatusException;
 
 import com.example.springSms.model.NotificationSms;
 import com.example.springSms.model.NotificationSmsStatus;
+import com.example.springSms.model.TwilioConfig;
 import com.example.springSms.repository.NotificationSmsJpaRepository;
 //import com.example.springSms.model.SmsPojo;
 import com.example.springSms.repository.NotificationSmsRepository;
@@ -29,15 +32,18 @@ public class NotificationSmsService implements NotificationSmsRepository{
 
     @Autowired
     private NotificationSmsStatusJpaRepository notificationSmsStatusJpaRepository;
+    
+    @Autowired
+    private TwilioConfig twilioConfig;
 
-    private final String ACCOUNT_SID = "AC61b259eb289150ca9cdb2aaf4d8f51b4";
+   /* private final String ACCOUNT_SID = "AC61b259eb289150ca9cdb2aaf4d8f51b4";
     private final String AUTH_TOKEN = "54b3b7d5d3138b341db6ba43bd39d6e7";
-    private final String FROM_NUMBER = "+12137862316";
+    private final String FROM_NUMBER = "+12137862316";*/
 
     public void send(NotificationSms sms) {
-        Twilio.init(ACCOUNT_SID, AUTH_TOKEN);
+        Twilio.init(twilioConfig.getAccountSid(), twilioConfig.getAuthToken());
 
-        Message message = Message.creator(new PhoneNumber(sms.getPhoneNumber()), new PhoneNumber(FROM_NUMBER), sms.getMessage())
+        Message message = Message.creator(new PhoneNumber(sms.getPhoneNumber()), new PhoneNumber(twilioConfig.getFromNumber()), sms.getMessage())
                 .create();
 
         // Save NotificationSms
@@ -62,3 +68,4 @@ public class NotificationSmsService implements NotificationSmsRepository{
     }
 	
 }
+
