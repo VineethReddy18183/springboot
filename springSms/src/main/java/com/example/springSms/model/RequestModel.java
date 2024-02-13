@@ -5,7 +5,6 @@ import java.util.Currency;
 import java.util.Date;
 import java.util.Map;
 
-import org.joda.time.DateTime;
 
 import com.twilio.rest.api.v2010.account.Message.Direction;
 import com.twilio.rest.api.v2010.account.Message.Status;
@@ -23,9 +22,9 @@ public class RequestModel {
     private String accountSid;
     private String apiVersion;
     private String body;
-    private DateTime dateCreated;
-    private DateTime dateSent;
-    private DateTime dateUpdated;
+   /* private Date dateCreated;
+    private Date dateSent;
+    private Date dateUpdated;*/
     private Direction direction;
     private Integer errorCode;
     private String errorMessage;

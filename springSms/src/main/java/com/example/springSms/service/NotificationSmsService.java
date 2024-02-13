@@ -54,7 +54,7 @@ public class NotificationSmsService implements NotificationSmsRepository{
          
         Message message = Message.creator(new PhoneNumber(sms.getPhoneNumber()), new PhoneNumber(twilioConfig.getFromNumber()), sms.getMessage())
                 .create();*/
-        System.out.println("test try");
+        
         TwilioRestClient twilioRestClient = new TwilioRestClient.Builder(
                 twilioConfig.getAccountSid(), twilioConfig.getAuthToken()).build();
         System.out.println("test try");
@@ -73,8 +73,8 @@ public class NotificationSmsService implements NotificationSmsRepository{
         }
         //populating responseModel Object
         responseModel.setSid(message.getSid());
-        responseModel.setDateCreated(message.getDateCreated());
-        responseModel.setDateUpdated(message.getDateUpdated());
+       /* responseModel.setDateCreated(message.getDateCreated().toDate());
+        responseModel.setDateUpdated(message.getDateUpdated().toDate());*/
         responseModel.setAccountSid(message.getAccountSid());
         responseModel.setTo(message.getTo());
         responseModel.setFrom(message.getFrom());
@@ -89,9 +89,9 @@ public class NotificationSmsService implements NotificationSmsRepository{
         requestModel.setAccountSid(message.getAccountSid());
         requestModel.setApiVersion(message.getApiVersion());
         requestModel.setBody(message.getBody());
-        requestModel.setDateCreated(message.getDateCreated());
-        requestModel.setDateSent(message.getDateSent());
-        requestModel.setDateUpdated(message.getDateUpdated());
+       /* requestModel.setDateCreated(message.getDateCreated().toDate());
+        requestModel.setDateSent(message.getDateSent().toDate());
+        requestModel.setDateUpdated(message.getDateUpdated().toDate());*/
         requestModel.setDirection(message.getDirection());
         requestModel.setErrorCode(message.getErrorCode());
         requestModel.setErrorMessage(message.getErrorMessage());
@@ -139,6 +139,16 @@ public class NotificationSmsService implements NotificationSmsRepository{
         System.out.println("Request: ");
         System.out.println(requestModel);
     }
+    
+    public ResponseModel getResponseModel()
+    {
+    	return responseModel;
+    }
+    public RequestModel getRequestModel()
+    {
+    	return requestModel;
+    }
+   
     
     
 

@@ -19,14 +19,14 @@ import lombok.NoArgsConstructor;
 public class ResponseModel {
 		private String sid;
 	    
-	    @JsonFormat(pattern = "EEE, dd MMM yyyy HH:mm:ss Z")
-	    private DateTime dateCreated;
+	   /* @JsonFormat(pattern = "EEE, dd MMM yyyy HH:mm:ss Z")
+	    private Date dateCreated;
 	    
 	    @JsonFormat(pattern = "EEE, dd MMM yyyy HH:mm:ss Z")
-	    private DateTime dateUpdated;
+	    private Date dateUpdated;
 	    
 	    @JsonFormat(pattern = "EEE, dd MMM yyyy HH:mm:ss Z")
-	    private DateTime dateSent;
+	    private Date dateSent;*/
 	    
 	    private String accountSid;
 	    private String to;

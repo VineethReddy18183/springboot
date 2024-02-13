@@ -5,6 +5,7 @@ import java.time.format.DateTimeFormatter;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -12,9 +13,10 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.example.springSms.model.CustomResponse;
 import com.example.springSms.model.NotificationSms;
 //import com.example.springSms.model.NotificationSms;
-import com.example.springSms.model.SmsPojo;
+
 import com.example.springSms.service.NotificationSmsService;
 
 @RestController
@@ -30,16 +32,24 @@ public class SMSController {
 
     @RequestMapping(value = "/sms", method = RequestMethod.POST,
             consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
-    public void smsSubmit(@RequestBody NotificationSms sms) {
+    public ResponseEntity<CustomResponse> smsSubmit(@RequestBody NotificationSms sms) {
         try{
             service.send(sms);
+            CustomResponse customResponse = new CustomResponse(
+            service.getResponseModel(),service.getRequestModel()
+                );
+            return ResponseEntity.ok().body(customResponse);
+                
+                
+            
         }
         catch(Exception e){
 
             webSocket.convertAndSend(TOPIC_DESTINATION, getTimeStamp() + ": Error sending the SMS: "+e.getMessage());
             throw e;
         }
-        webSocket.convertAndSend(TOPIC_DESTINATION, getTimeStamp() + ": SMS has been sent!: "+sms.getPhoneNumber());
+       // webSocket.convertAndSend(TOPIC_DESTINATION, getTimeStamp() + ": SMS has been sent!: "+sms.getPhoneNumber());
+       
 
     }
 
