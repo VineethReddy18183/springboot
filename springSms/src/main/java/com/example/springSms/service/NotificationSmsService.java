@@ -12,12 +12,18 @@ import org.springframework.web.server.ResponseStatusException;
 
 import com.example.springSms.model.NotificationSms;
 import com.example.springSms.model.NotificationSmsStatus;
+import com.example.springSms.model.RequestModel;
+import com.example.springSms.model.ResponseModel;
 import com.example.springSms.model.TwilioConfig;
 import com.example.springSms.repository.NotificationSmsJpaRepository;
 //import com.example.springSms.model.SmsPojo;
 import com.example.springSms.repository.NotificationSmsRepository;
 import com.example.springSms.repository.NotificationSmsStatusJpaRepository;
 import com.twilio.Twilio;
+import com.twilio.exception.ApiException;
+import com.twilio.http.Request;
+import com.twilio.http.Response;
+import com.twilio.http.TwilioRestClient;
 import com.twilio.rest.api.v2010.account.Message;
 import com.twilio.type.PhoneNumber;
 
@@ -35,17 +41,83 @@ public class NotificationSmsService implements NotificationSmsRepository{
     
     @Autowired
     private TwilioConfig twilioConfig;
+    
+    
+    private ResponseModel responseModel = new ResponseModel();
+    
+    private RequestModel requestModel = new RequestModel();
 
-   /* private final String ACCOUNT_SID = "AC61b259eb289150ca9cdb2aaf4d8f51b4";
-    private final String AUTH_TOKEN = "54b3b7d5d3138b341db6ba43bd39d6e7";
-    private final String FROM_NUMBER = "+12137862316";*/
+
 
     public void send(NotificationSms sms) {
-        Twilio.init(twilioConfig.getAccountSid(), twilioConfig.getAuthToken());
-
+       /* Twilio.init(twilioConfig.getAccountSid(), twilioConfig.getAuthToken());
+         
         Message message = Message.creator(new PhoneNumber(sms.getPhoneNumber()), new PhoneNumber(twilioConfig.getFromNumber()), sms.getMessage())
-                .create();
+                .create();*/
+        System.out.println("test try");
+        TwilioRestClient twilioRestClient = new TwilioRestClient.Builder(
+                twilioConfig.getAccountSid(), twilioConfig.getAuthToken()).build();
+        System.out.println("test try");
+        // Create a message using the TwilioRestClient
+        Message message = null;
+        try {
+            message = Message.creator(
+                    new PhoneNumber(sms.getPhoneNumber()),
+                    new PhoneNumber(twilioConfig.getFromNumber()),
+                    sms.getMessage()
+            ).create(twilioRestClient);
+            
+        } catch (ApiException e) {
+            
+            e.printStackTrace();
+        }
+        //populating responseModel Object
+        responseModel.setSid(message.getSid());
+        responseModel.setDateCreated(message.getDateCreated());
+        responseModel.setDateUpdated(message.getDateUpdated());
+        responseModel.setAccountSid(message.getAccountSid());
+        responseModel.setTo(message.getTo());
+        responseModel.setFrom(message.getFrom());
+        responseModel.setBody(message.getBody());
+        responseModel.setStatus(message.getStatus());
 
+        responseModel.setApiVersion(message.getApiVersion());
+        responseModel.setPrice(message.getPrice());
+        responseModel.setUri(message.getUri());
+        
+      //populating request model object
+        requestModel.setAccountSid(message.getAccountSid());
+        requestModel.setApiVersion(message.getApiVersion());
+        requestModel.setBody(message.getBody());
+        requestModel.setDateCreated(message.getDateCreated());
+        requestModel.setDateSent(message.getDateSent());
+        requestModel.setDateUpdated(message.getDateUpdated());
+        requestModel.setDirection(message.getDirection());
+        requestModel.setErrorCode(message.getErrorCode());
+        requestModel.setErrorMessage(message.getErrorMessage());
+        requestModel.setFrom(message.getFrom());
+
+        requestModel.setNumMedia(message.getNumMedia());
+        requestModel.setNumSegments(message.getNumSegments());
+        requestModel.setPrice(message.getPrice());
+        requestModel.setPriceUnit(message.getPriceUnit());
+        requestModel.setSid(message.getSid());
+        requestModel.setStatus(message.getStatus());
+        requestModel.setSubresourceUris(message.getSubresourceUris());
+        requestModel.setTo(message.getTo());
+        requestModel.setUri(message.getUri());
+        
+       
+
+        
+        
+        
+
+        
+    
+        
+        
+       
         // Save NotificationSms
         notificationSmsJpaRepository.save(sms);
 
@@ -59,9 +131,17 @@ public class NotificationSmsService implements NotificationSmsRepository{
             status.setMessageStatus("SENT");
         }
         notificationSmsStatusJpaRepository.save(status);
+       
 
-        System.out.println("here is my id:" + message.getSid());
+        
+        System.out.println("Response : ");
+        System.out.println(responseModel);
+        System.out.println("Request: ");
+        System.out.println(requestModel);
     }
+    
+    
+
 
     public void receive(MultiValueMap<String, String> smscallback) {
         // Implementation for receiving SMS callbacks
