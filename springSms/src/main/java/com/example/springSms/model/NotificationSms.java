@@ -16,24 +16,18 @@ public class NotificationSms {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	@Column(name = "notification_id")
 	private int notificationId;
-	
-	
-	@Column(name = "phone_number")
-	private String phoneNumber;
-	
+
 	@Column(name = "message")
 	private String message;
-	
-	@OneToOne
-	@JoinColumn(name ="status_id")
-	private NotificationSmsStatus notificationSmsStatus;
-	
-	
 
-	public NotificationSms(int notificationId, String phoneNumber, String message,NotificationSmsStatus notificationSmsStatus) {
+	@OneToOne
+	@JoinColumn(name = "status_id")
+	private NotificationSmsStatus notificationSmsStatus;
+
+	public NotificationSms(int notificationId, String message, NotificationSmsStatus notificationSmsStatus) {
 		super();
 		this.notificationId = notificationId;
-		this.phoneNumber = phoneNumber;
+
 		this.message = message;
 		this.notificationSmsStatus = notificationSmsStatus;
 	}
@@ -44,14 +38,6 @@ public class NotificationSms {
 
 	public void setNotificationId(int notificationId) {
 		this.notificationId = notificationId;
-	}
-
-	public String getPhoneNumber() {
-		return phoneNumber;
-	}
-
-	public void setPhoneNumber(String phoneNumber) {
-		this.phoneNumber = phoneNumber;
 	}
 
 	public String getMessage() {
@@ -69,6 +55,5 @@ public class NotificationSms {
 	public void setNotificationSmsStatus(NotificationSmsStatus notificationSmsStatus) {
 		this.notificationSmsStatus = notificationSmsStatus;
 	}
-	
 
 }

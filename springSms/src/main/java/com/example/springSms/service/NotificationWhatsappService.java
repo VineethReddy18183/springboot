@@ -5,29 +5,28 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.MultiValueMap;
 
 import com.example.springSms.model.Client;
-import com.example.springSms.model.NotificationSms;
-import com.example.springSms.model.NotificationSmsStatus;
+import com.example.springSms.model.NotificationWhatsapp;
+import com.example.springSms.model.NotificationWhatsappStatus;
 import com.example.springSms.model.RequestModel;
 import com.example.springSms.model.ResponseModel;
 import com.example.springSms.model.TwilioConfig;
 import com.example.springSms.repository.ClientJpaRepository;
-import com.example.springSms.repository.NotificationSmsJpaRepository;
-//import com.example.springSms.model.SmsPojo;
-import com.example.springSms.repository.NotificationSmsRepository;
-import com.example.springSms.repository.NotificationSmsStatusJpaRepository;
+import com.example.springSms.repository.NotificationWhatsappJpaRepository;
+import com.example.springSms.repository.NotificationWhatsappRepository;
+import com.example.springSms.repository.NotificationWhatsappStatusJpaRepository;
 import com.twilio.exception.ApiException;
 import com.twilio.http.TwilioRestClient;
 import com.twilio.rest.api.v2010.account.Message;
 import com.twilio.type.PhoneNumber;
 
 @Service
-public class NotificationSmsService implements NotificationSmsRepository {
+public class NotificationWhatsappService implements NotificationWhatsappRepository {
 
 	@Autowired
-	private NotificationSmsJpaRepository notificationSmsJpaRepository;
+	private NotificationWhatsappJpaRepository notificationWhatsappJpaRepository;
 
 	@Autowired
-	private NotificationSmsStatusJpaRepository notificationSmsStatusJpaRepository;
+	private NotificationWhatsappStatusJpaRepository notificationWhatsappStatusJpaRepository;
 
 	@Autowired
 	private TwilioConfig twilioConfig;
@@ -36,32 +35,28 @@ public class NotificationSmsService implements NotificationSmsRepository {
 	private ClientJpaRepository clientJpaRepository;
 
 	private ResponseModel responseModel = new ResponseModel();
-
 	private RequestModel requestModel = new RequestModel();
 
-	public void send(int clientId, NotificationSms sms) {
-		/* Twilio.init(twilioConfig.getAccountSid(), twilioConfig.getAuthToken());
-		 
-		Message message = Message.creator(new PhoneNumber(sms.getPhoneNumber()), new PhoneNumber(twilioConfig.getFromNumber()), sms.getMessage())
-		        .create();*/
+	@Override
+	public void send(int clientId, NotificationWhatsapp whatsapp) {
+		TwilioRestClient twilioRestClient = new TwilioRestClient.Builder(twilioConfig.getWhatsappAccountSid(),
+				twilioConfig.getWhatsappAuthToken()).build();
 
 		Client client = clientJpaRepository.findById(clientId).get();
 
-		TwilioRestClient twilioRestClient = new TwilioRestClient.Builder(client.getAccountSid(), client.getAuthToken())
-				.build();
-
-		// Create a message using the TwilioRestClient
 		Message message = null;
-		try {
 
-			message = Message.creator(new PhoneNumber(client.getPhoneNumber()),
-					new PhoneNumber(client.getSmsFromNumber()), sms.getMessage()).create(twilioRestClient);
+		try {
+			message = Message
+					.creator(new PhoneNumber("whatsapp:" + client.getPhoneNumber()),
+							new PhoneNumber("whatsapp:" + client.getWhatsappFromNumber()), whatsapp.getMessage())
+					.create(twilioRestClient);
 
 		} catch (ApiException e) {
 
 			e.printStackTrace();
+
 		}
-		//populating responseModel Object
 		responseModel.setSid(message.getSid());
 		/* responseModel.setDateCreated(message.getDateCreated().toDate());
 		responseModel.setDateUpdated(message.getDateUpdated().toDate());*/
@@ -97,24 +92,21 @@ public class NotificationSmsService implements NotificationSmsRepository {
 		requestModel.setTo(message.getTo());
 		requestModel.setUri(message.getUri());
 
-		// Save NotificationSms
-		notificationSmsJpaRepository.save(sms);
-
-		// Create or update NotificationSmsStatus
-		NotificationSmsStatus status = sms.getNotificationSmsStatus();
+		notificationWhatsappJpaRepository.save(whatsapp);
+		NotificationWhatsappStatus status = whatsapp.getNotificationWhatsappStatus();
 		if (status == null) {
-			status = new NotificationSmsStatus();
+			status = new NotificationWhatsappStatus();
 			status.setMessageStatus("SENT");
-			sms.setNotificationSmsStatus(status); // Associate status with sms
+			whatsapp.setNotificationWhatsappStatus(status); // Associate status with sms
 		} else {
 			status.setMessageStatus("SENT");
 		}
-		notificationSmsStatusJpaRepository.save(status);
-
+		notificationWhatsappStatusJpaRepository.save(status);
 		System.out.println("Response : ");
 		System.out.println(responseModel);
 		System.out.println("Request: ");
 		System.out.println(requestModel);
+
 	}
 
 	public ResponseModel getResponseModel() {
@@ -125,7 +117,7 @@ public class NotificationSmsService implements NotificationSmsRepository {
 		return requestModel;
 	}
 
-	public void receive(MultiValueMap<String, String> smscallback) {
+	public void receive(MultiValueMap<String, String> whatsappcallback) {
 		// Implementation for receiving SMS callbacks
 	}
 
